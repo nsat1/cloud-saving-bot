@@ -5,4 +5,5 @@ router = Router()
 
 @router.message(Command(commands=["start"]))
 async def start_command(message: types.Message):
-    await message.answer("hello")
+    user_name = message.from_user.full_name
+    await message.answer(f"Hello, {user_name}!")
