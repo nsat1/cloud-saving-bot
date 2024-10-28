@@ -12,6 +12,7 @@ async def handle_photo(message: Message, bot: Bot):
 
     if message.from_user.id in ALLOWED_USERS:
         photo = message.photo[-1]
+        await message.answer("Загрузка ...")
         file_info = await bot.get_file(photo.file_id)
         byte_stream = BytesIO()
         await bot.download_file(file_info.file_path, destination=byte_stream)
