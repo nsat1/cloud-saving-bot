@@ -14,10 +14,11 @@ async def handle_photo(message: Message, bot: Bot):
         photo = message.photo[-1]
         await message.answer("Загрузка ...")
         file_info = await bot.get_file(photo.file_id)
-        byte_stream = BytesIO()
-        await bot.download_file(file_info.file_path, destination=byte_stream)
-        byte_stream.seek(0)
-        result = upload_photo(byte_stream, photo.file_id)
+
+        with BytesIO() as byte_stream:
+            await bot.download_file(file_info.file_path, destination=byte_stream)
+            byte_stream.seek(0)
+            result = upload_photo(byte_stream, photo.file_id)
 
         if result:
             await message.answer("Фото успешно загружено")
