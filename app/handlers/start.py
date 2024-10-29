@@ -1,7 +1,7 @@
 from aiogram import Router, types
 from aiogram.filters import Command
 
-router = Router()
+router = Router(name="start")
 
 @router.message(Command(commands=["start"]))
 async def start_command(message: types.Message):

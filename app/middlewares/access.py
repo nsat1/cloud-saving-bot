@@ -1,4 +1,5 @@
 from aiogram import BaseMiddleware
+
 from app.config import ALLOWED_USERS
 
 

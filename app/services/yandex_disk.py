@@ -1,5 +1,7 @@
 import yadisk
+
 from app.config import YANDEX_TOKEN
+
 
 yadisk_instance = yadisk.YaDisk(token=YANDEX_TOKEN)
 
