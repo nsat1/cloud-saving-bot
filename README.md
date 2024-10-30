@@ -1,13 +1,7 @@
-<div style="text-align: center;">
-  <span style="font-size: 36px; font-style: italic;">Photo-saving Telegram bot</span>
-  <hr style="width: 50%; margin: 10px auto;">
-</div>
-When sending or forwarding photos (including uncompressed) in chat with bot,   
-it will save all photos to Yandex Disk in a folder  
-(by default bot_uploads, you can choose any other).
+# *Photo-saving Telegram bot*
 
-
-The bot accepts photos from specific users by checking their Telegram ids.  
+When sending or forwarding photos (including uncompressed) in chat with bot, it will save all photos to Yandex Disk in a folder  
+(by default bot_uploads, you can choose any other). The bot accepts photos from specific users by checking their Telegram ids.  
 For users whose ids are not specified, the bot will not show any activity.
 
 # Environment variables 🦠 
