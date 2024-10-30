@@ -7,6 +7,6 @@ def get_handlers_router() -> Router:
     router = Router()
     router.include_router(start.router)
     router.include_router(photo.router)
-    router.include_router(document.router)
+    router.include_router(photo_as_document.router)
 
     return router
