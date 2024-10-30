@@ -1,7 +1,7 @@
 # *Photo-saving Telegram bot*
 
-When sending or forwarding photos (including uncompressed) in chat with bot, it will save all photos to Yandex Disk in a folder  
-(by default bot_uploads, you can choose any other). The bot accepts photos from specific users by checking their Telegram ids.  
+When sending or forwarding photos (including uncompressed) in chat with bot, it will save all photos to Yandex Disk in a folder
+(by default bot_uploads, you can choose any other). The bot accepts photos from specific users by checking their Telegram ids.
 For users whose ids are not specified, the bot will not show any activity.
 
 # Environment variables 🦠 
