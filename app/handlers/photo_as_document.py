@@ -9,6 +9,15 @@ router = Router(name="photo_as_document")
 
 @router.message(F.content_type == ContentType.DOCUMENT)
 async def handle_document(message: Message, bot: Bot):
+    """
+    Обрабатывает сообщения с документами(фотографии без сжатия), загружает их на Яндекс Диск.
+
+    :param message: Объект сообщения, содержащий документ.
+    :type message: Message
+    :param bot: Объект бота для взаимодействия с Telegram API.
+    :type bot: Bot
+    """
+
     document = message.document
     file_info = await bot.get_file(document.file_id)
 

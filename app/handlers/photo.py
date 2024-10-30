@@ -10,6 +10,14 @@ router = Router(name="photo")
 
 @router.message(F.content_type == ContentType.PHOTO)
 async def handle_photo(message: Message, bot: Bot):
+    """
+    Обрабатывает сообщения с фотографиями, загружает их на Яндекс Диск.
+
+    :param message: Объект сообщения, содержащий фотографию.
+    :type message: Message
+    :param bot: Объект бота для взаимодействия с Telegram API.
+    :type bot: Bot
+    """
 
     photo = message.photo[-1]
     file_info = await bot.get_file(photo.file_id)
