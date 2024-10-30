@@ -18,6 +18,6 @@ async def handle_document(message: Message, bot: Bot):
         result = upload_photo(byte_stream, document.file_id)
 
         if result:
-            await message.answer("Документ успешно загружен")
+            await message.answer("Документ успешно загружен 🙌")
         else:
-            await message.answer("Ошибка")
+            await message.answer("Ошибка при загрузке")

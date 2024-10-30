@@ -20,6 +20,6 @@ async def handle_photo(message: Message, bot: Bot):
         result = upload_photo(byte_stream, photo.file_id)
 
         if result:
-            await message.answer("Фото успешно загружено")
+            await message.answer("Фото успешно загружено 🙌")
         else:
-            await message.answer("Ошибка")
+            await message.answer("Ошибка при загрузке")
