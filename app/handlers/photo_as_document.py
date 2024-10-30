@@ -5,7 +5,7 @@ from aiogram.types import ContentType, Message
 
 from app.services.yandex_disk import upload_photo
 
-router = Router(name="document")
+router = Router(name="photo_as_document")
 
 @router.message(F.content_type == ContentType.DOCUMENT)
 async def handle_document(message: Message, bot: Bot):
