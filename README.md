@@ -29,6 +29,8 @@ pip install -r requirements.txt
 - configure environment variables in `.env` file
 - start `main.py` in `app` directory
 
+Don't forget to create a “bot_uploads” folder in the root of the Yandex Disk.
+
 # License ⚖️
 Distributed under MIT license. See [LICENSE](https://github.com/nsat1/photo-saving-bot/blob/main/LICENSE) for more information.
 
