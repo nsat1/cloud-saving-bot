@@ -5,12 +5,12 @@ from aiogram.types import ContentType, Message
 
 from app.services.yandex_disk import upload_photo
 
-router = Router(name="photo_as_document")
+router = Router(name="document")
 
 @router.message(F.content_type == ContentType.DOCUMENT)
 async def handle_document(message: Message, bot: Bot):
     """
-    Обрабатывает сообщения с документами(фотографии без сжатия), загружает их на Яндекс Диск.
+    Обрабатывает сообщения с документами, загружает их на Яндекс Диск.
 
     :param message: Объект сообщения, содержащий документ.
     :type message: Message
