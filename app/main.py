@@ -4,7 +4,7 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
-from config import BOT_TOKEN
+from app.config import BOT_TOKEN
 from middlewares.access import AccessMiddleware
 from handlers import get_handlers_router
 
