@@ -6,7 +6,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 
 from app.config import BOT_TOKEN
 from app.middlewares.access import AccessMiddleware
-from handlers import get_handlers_router
+from app.handlers import get_handlers_router
 
 
 logging.basicConfig(
