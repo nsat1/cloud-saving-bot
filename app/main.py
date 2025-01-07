@@ -5,7 +5,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from app.config import BOT_TOKEN
-from middlewares.access import AccessMiddleware
+from app.middlewares.access import AccessMiddleware
 from handlers import get_handlers_router
 
 
