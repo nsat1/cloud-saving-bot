@@ -1,9 +1,6 @@
 from aiogram import Router, types
-from aiogram.types import ContentType, Message
-
 
 router = Router(name="other")
-
 
 @router.message()
 async def handle_other_messages(message: types.Message):
