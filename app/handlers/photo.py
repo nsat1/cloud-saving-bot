@@ -3,7 +3,7 @@ from io import BytesIO
 from aiogram import Router, F, Bot
 from aiogram.types import ContentType, Message
 
-from app.services.yandex_disk import upload_photo
+from app.services.yandex_disk import upload
 
 
 router = Router(name="photo")
@@ -25,7 +25,7 @@ async def handle_photo(message: Message, bot: Bot):
     with BytesIO() as byte_stream:
         await bot.download_file(file_info.file_path, destination=byte_stream)
         byte_stream.seek(0)
-        result = upload_photo(byte_stream, photo.file_id)
+        result = upload(byte_stream, photo.file_id)
 
         if result:
             await message.answer("Фото успешно загружено 🙌")

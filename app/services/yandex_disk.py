@@ -5,11 +5,11 @@ from app.config import YANDEX_TOKEN
 
 yadisk_instance = yadisk.YaDisk(token=YANDEX_TOKEN)
 
-def upload_photo(file_stream, file_id) -> bool:
+def upload(file_stream, file_id) -> bool:
     """
-    Загружает фотографию на Яндекс.Диск.
+    Загружает файл на Яндекс.Диск.
 
-    :param file_stream: Поток байтов, содержащий фотографию.
+    :param file_stream: Поток байтов, содержащий файл.
     :type file_stream: BytesIO
     :param file_id: Уникальный идентификатор файла.
     :type file_id: str

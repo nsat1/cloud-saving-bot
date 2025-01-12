@@ -1,9 +1,11 @@
-[project]
+[tool.poetry]
+package-mode = false
+
 name = "save-bot"
 version = "0.1.0"
 description = "Telegram bot on Python aiogram to save files to Yandex Disk from certain users."
 authors = [
-    {name = "Your Name",email = "you@example.com"}
+    {name = "nsat1",email = "artnas379@gmail.com"}
 ]
 license = {text = "MIT"}
 readme = "README.md"
