@@ -9,17 +9,23 @@ from app.middlewares.access import AccessMiddleware
 from app.handlers import get_handlers_router
 
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(filename)s:%(lineno)d #%(levelname)-8s '
-           '[%(asctime)s] - %(name)s - %(message)s')
+async def main():
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(filename)s:%(lineno)d #%(levelname)-8s '
+               '[%(asctime)s] - %(name)s - %(message)s')
 
+    bot = Bot(token=BOT_TOKEN)
+    dp = Dispatcher(storage=MemoryStorage())
 
-bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher(storage=MemoryStorage())
+    dp.include_router(get_handlers_router())
+    dp.message.middleware(AccessMiddleware())
 
-dp.message.middleware(AccessMiddleware())
-dp.include_router(get_handlers_router())
+    logging.info("Starting bot...")
+    await bot.delete_webhook(drop_pending_updates=True)
+    await dp.start_polling(bot)
+    logging.info("Bot stopped.")
+
 
 if __name__ == "__main__":
-    asyncio.run(dp.start_polling(bot))
+    asyncio.run(main())
