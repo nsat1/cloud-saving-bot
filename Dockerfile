@@ -1,14 +1,21 @@
-FROM python:3.10.13-alpine3.18
+FROM python:3.13-slim
 
-WORKDIR /usr/src
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    POETRY_VIRTUALENVS_IN_PROJECT=true \
+    POETRY_NO_INTERACTION=1
 
-RUN pip install poetry
+WORKDIR /opt/bot
+
+RUN pip install --no-cache-dir "poetry==2.5.1"
 
 COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-root --no-dev
+RUN poetry install --only main --no-root
 
 COPY app/ app/
 
-ENV PYTHONPATH /usr/src
+RUN useradd --create-home --uid 10001 bot
+USER bot
 
-CMD ["python", "app/main.py"]
+ENV PATH="/opt/bot/.venv/bin:$PATH"
+CMD ["python", "-m", "app.main"]

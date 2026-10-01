@@ -1,41 +1,38 @@
+[project]
+name = "save-bot"
+version = "0.2.0"
+description = "Telegram bot saving photos, videos and documents to Yandex Disk."
+authors = [{name = "nsat1", email = "artnas379@gmail.com"}]
+license = "MIT"
+readme = "README.md"
+requires-python = ">=3.12,<3.15"
+dependencies = [
+    "aiogram>=3.31.0,<4.0",
+    "aiohttp>=3.13,<4.0",
+    "python-dotenv>=1.2.1,<2.0",
+    "yadisk[aiohttp,async-files,sync-defaults]>=3.4.1,<4.0",
+]
+
 [tool.poetry]
 package-mode = false
 
-name = "save-bot"
-version = "0.1.0"
-description = "Telegram bot on Python aiogram to save files to Yandex Disk from certain users."
-authors = [
-    {name = "nsat1",email = "artnas379@gmail.com"}
-]
-license = {text = "MIT"}
-readme = "README.md"
-requires-python = ">=3.13"
-dependencies = [
-    "aiofiles (==24.1.0)",
-    "aiogram (==3.13.1)",
-    "aiohappyeyeballs (==2.4.3)",
-    "aiohttp (==3.10.10)",
-    "aiosignal (==1.3.1)",
-    "annotated-types (==0.7.0)",
-    "attrs (==24.2.0)",
-    "certifi (==2024.8.30)",
-    "charset-normalizer (==3.4.0)",
-    "frozenlist (==1.5.0)",
-    "idna (==3.10)",
-    "magic-filter (==1.0.12)",
-    "multidict (==6.1.0)",
-    "propcache (==0.2.0)",
-    "pydantic (==2.9.2)",
-    "pydantic-core (==2.23.4)",
-    "python-dotenv (==1.0.1)",
-    "requests (==2.32.3)",
-    "typing-extensions (==4.12.2)",
-    "urllib3 (==2.2.3)",
-    "yadisk (==3.1.0)",
-    "yarl (==1.16.0)"
-]
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.4,<10.0"
+pytest-asyncio = ">=1.2,<2.0"
+ruff = ">=0.13,<1.0"
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC"]
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
+requires = ["poetry-core>=2.2,<3.0"]
 build-backend = "poetry.core.masonry.api"
