@@ -1,13 +1,14 @@
-from aiogram import Router
+from aiogram import F, Router
+from aiogram.filters import CommandStart
+
+from app.handlers.media import handle_media
+from app.handlers.other import handle_other_messages
+from app.handlers.start import start_command
 
 
-def get_handlers_router() -> Router:
-    from . import start, photo, document, other
-
-    router = Router()
-    router.include_router(start.router)
-    router.include_router(photo.router)
-    router.include_router(document.router)
-    router.include_router(other.router)
-
+def create_handlers_router() -> Router:
+    router = Router(name="messages")
+    router.message.register(start_command, CommandStart())
+    router.message.register(handle_media, F.photo | F.video | F.document)
+    router.message.register(handle_other_messages)
     return router

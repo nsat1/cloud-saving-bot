@@ -1,21 +1,24 @@
-from aiogram import BaseMiddleware
+"""Игнорирование сообщений от пользователей вне списка доступа без ответа."""
 
-from app.config import ALLOWED_USERS
+from collections.abc import Awaitable, Callable
+from typing import Any
+
+from aiogram import BaseMiddleware
+from aiogram.types import Message, TelegramObject
 
 
 class AccessMiddleware(BaseMiddleware):
-    """
-    Проверяет, есть ли у пользователя доступ к функционалу бота.
-    Если пользователь не в списке разрешенных, отправляет сообщение об отсутствии доступа.
-    """
+    def __init__(self, allowed_ids: frozenset[int]) -> None:
+        self._allowed_ids = allowed_ids
 
-    async def __call__(self, handler, event, data):
-        """
-        Вызывается для каждого события, проверяет доступ пользователя.
-        """
-
-        user_id = event.from_user.id
-        if user_id not in ALLOWED_USERS:
-            await event.answer("😔 У Вас нет доступа.")
-            return
+    async def __call__(
+        self,
+        handler: Callable[[TelegramObject, dict[str, Any]], Awaitable[Any]],
+        event: TelegramObject,
+        data: dict[str, Any],
+    ) -> Any:
+        if not isinstance(event, Message):
+            return None
+        if event.from_user is None or event.from_user.id not in self._allowed_ids:
+            return None
         return await handler(event, data)

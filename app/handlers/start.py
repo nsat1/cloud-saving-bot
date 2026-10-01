@@ -1,18 +1,15 @@
-from aiogram import Router, types
-from aiogram.filters import Command
+from aiogram.types import Message
 
-router = Router(name="start")
+from app.config import Settings
 
-@router.message(Command(commands=["start"]))
-async def start_command(message: types.Message):
-    """
-    Обрабатывает команду /start.
 
-    :param message: Объект сообщения, содержащий команду /start.
-    :type message: types.Message
-    """
-
-    user_name = message.from_user.full_name
-    await message.answer(f"Привет, {user_name}🖐️\n"
-                         f"\nЯ умею сохранять фото📷 на Яндекс Диск.\n"
-                         f"\nОтправь мне фото📷, которые нужно сохранить или перешли их в чат.")
+async def start_command(message: Message, settings: Settings) -> None:
+    name = message.from_user.full_name if message.from_user else "друг"
+    await message.answer(
+        f"Привет, {name}!\n\n"
+        "Я сохраняю фото, видео и документы на Яндекс.Диск. "
+        f"Максимальный размер файла — {settings.max_file_size_mb} МБ. "
+        "Отправь или перешли мне файл. "
+        "Фото сохраняются в наибольшем размере, доступном в сообщении. "
+        "Чтобы сохранить оригинал без сжатия Telegram, отправь его как документ."
+    )

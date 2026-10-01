@@ -1,26 +1,61 @@
-import yadisk
+"""Асинхронный адаптер для Яндекс Диска."""
 
-from app.config import YANDEX_TOKEN
+from pathlib import Path
+
+from yadisk import AsyncClient
+from yadisk.exceptions import (
+    ForbiddenError,
+    InsufficientStorageError,
+    ParentNotFoundError,
+    PathExistsError,
+    PathNotFoundError,
+    UnauthorizedError,
+    WrongResourceTypeError,
+    YaDiskError,
+)
 
 
-yadisk_instance = yadisk.YaDisk(token=YANDEX_TOKEN)
+class StorageError(Exception):
+    """Ошибка хранилища с безопасным пояснением для пользователя."""
 
-def upload(file_stream, file_id) -> bool:
-    """
-    Загружает файл на Яндекс.Диск.
 
-    :param file_stream: Поток байтов, содержащий файл.
-    :type file_stream: BytesIO
-    :param file_id: Уникальный идентификатор файла.
-    :type file_id: str
-    :return: True, если загрузка прошла успешно, иначе False.
-    :rtype: bool
-    """
+def _storage_error(error: YaDiskError) -> StorageError:
+    if isinstance(error, (UnauthorizedError, ForbiddenError)):
+        return StorageError("Нет доступа к Яндекс.Диску. Обратитесь к владельцу бота.")
+    if isinstance(error, InsufficientStorageError):
+        return StorageError("На Яндекс.Диске закончилось свободное место.")
+    if isinstance(error, (ParentNotFoundError, PathNotFoundError, WrongResourceTypeError)):
+        return StorageError("Папка сохранения недоступна. Обратитесь к владельцу бота.")
+    return StorageError("Не удалось загрузить файл на Яндекс.Диск. Попробуйте позже.")
 
-    try:
-        yadisk_instance.upload(file_stream, f"/bot_uploads/{file_id}", overwrite=True)
-        return True
 
-    except Exception as e:
-        print(f"Ошибка загрузки. {e}")
-        return False
+class YandexDiskStorage:
+    def __init__(self, client: AsyncClient, folder: str) -> None:
+        self._client = client
+        self._folder = folder
+
+    async def prepare(self) -> None:
+        """Проверить токен и создать недостающие родительские папки."""
+        try:
+            if not await self._client.check_token():
+                raise StorageError("YANDEX_TOKEN: токен недействителен")
+            path = ""
+            for part in self._folder.strip("/").split("/"):
+                path += "/" + part
+                try:
+                    await self._client.mkdir(path)
+                except PathExistsError:
+                    if not await self._client.is_dir(path):
+                        raise StorageError(
+                            "YANDEX_FOLDER: путь занят файлом, укажите другую папку"
+                        ) from None
+        except YaDiskError as error:
+            raise _storage_error(error) from error
+
+    async def upload(self, source: Path, filename: str) -> str:
+        destination = self._folder + "/" + filename
+        try:
+            await self._client.upload(str(source), destination, overwrite=True)
+        except YaDiskError as error:
+            raise _storage_error(error) from error
+        return destination
