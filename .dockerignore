@@ -10,3 +10,6 @@ __pycache__
 .ruff_cache
 tests
 .github
+.coverage*
+coverage.xml
+htmlcov

@@ -27,7 +27,20 @@ jobs:
       - run: poetry install --no-root --no-interaction
       - run: poetry run ruff check app tests
       - run: poetry run ruff format --check app tests
-      - run: poetry run pytest -q
+      - name: Запустить pytest и измерить покрытие
+        id: pytest
+        run: >-
+          poetry run pytest -q --cov=app --cov-report=term-missing
+          --cov-report=xml --cov-report=html
+      - name: Сохранить отчёты покрытия
+        if: ${{ always() && steps.pytest.outcome != 'skipped' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-python-${{ matrix.python-version }}
+          path: |
+            coverage.xml
+            htmlcov/
+          retention-days: 14
 
   docker:
     needs: checks
