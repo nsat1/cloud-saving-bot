@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+    env:
+      POETRY_VIRTUALENVS_IN_PROJECT: "true"
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install poetry==2.5.1
+      - run: poetry check --lock --strict
+      - run: poetry install --no-root --no-interaction
+      - run: poetry run ruff check app tests
+      - run: poetry run ruff format --check app tests
+      - run: poetry run pytest -q
+
+  docker:
+    needs: checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - run: docker build --tag cloud-saving-bot:ci .
+      - name: Проверить импорт приложения и запуск без прав root
+        run: >-
+          docker run --rm --network none --entrypoint python cloud-saving-bot:ci
+          -c "import os; import app.main; assert os.getuid() != 0"
