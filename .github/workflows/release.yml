@@ -1,0 +1,71 @@
+name: Релиз
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    needs: checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Проверить версию и подготовить описание релиза
+        run: |
+          python3 - <<'PY'
+          import os
+          import tomllib
+          from pathlib import Path
+
+          tag = os.environ["GITHUB_REF_NAME"]
+          version = tomllib.loads(Path("pyproject.toml").read_text())["project"]["version"]
+          if tag != "v" + version:
+              raise SystemExit("Тег не совпадает с версией в pyproject.toml")
+          sections = Path("CHANGELOG.md").read_text(encoding="utf-8").split("\n## ")
+          notes = next((section for section in sections[1:] if section.startswith(tag + " ")), None)
+          if notes is None:
+              raise SystemExit("Для этой версии нет описания в CHANGELOG.md")
+          Path(os.environ["RUNNER_TEMP"], "release-notes.md").write_text(
+              "## " + notes.strip() + "\n", encoding="utf-8"
+          )
+          PY
+      - name: Собрать и проверить Docker-образ
+        run: |
+          docker build --platform linux/amd64 --tag "cloud-saving-bot:${GITHUB_REF_NAME}" .
+          docker run --rm --network none --entrypoint python \
+            --env "EXPECTED_VERSION=${GITHUB_REF_NAME#v}" \
+            "cloud-saving-bot:${GITHUB_REF_NAME}" \
+            -c 'import os, tomllib; from pathlib import Path; import app.main; assert os.getuid() != 0; assert tomllib.loads(Path("pyproject.toml").read_text())["project"]["version"] == os.environ["EXPECTED_VERSION"]'
+      - name: Сохранить Docker-образ для Linux/amd64
+        run: |
+          docker save "cloud-saving-bot:${GITHUB_REF_NAME}" \
+            | gzip > "cloud-saving-bot-${GITHUB_REF_NAME}-linux-amd64.tar.gz"
+          sha256sum "cloud-saving-bot-${GITHUB_REF_NAME}-linux-amd64.tar.gz" \
+            > "cloud-saving-bot-${GITHUB_REF_NAME}-linux-amd64.tar.gz.sha256"
+      - name: Опубликовать релиз и файл сборки
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            "cloud-saving-bot-${GITHUB_REF_NAME}-linux-amd64.tar.gz" \
+            "cloud-saving-bot-${GITHUB_REF_NAME}-linux-amd64.tar.gz.sha256" \
+            --repo "${GITHUB_REPOSITORY}" --verify-tag \
+            --title "${GITHUB_REF_NAME}" --latest \
+            --notes-file "${RUNNER_TEMP}/release-notes.md"

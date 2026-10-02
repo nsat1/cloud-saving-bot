@@ -1,6 +1,6 @@
 [project]
 name = "save-bot"
-version = "0.2.0"
+version = "1.1.0"
 description = "Telegram bot saving photos, videos and documents to Yandex Disk."
 authors = [{name = "nsat1", email = "artnas379@gmail.com"}]
 license = "MIT"
